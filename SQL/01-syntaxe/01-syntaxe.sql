@@ -102,3 +102,5 @@ INSERT INTO employes (id_employes, prenom, nom, sexe, service, date_embauche, sa
 (990, 'Stephanie', 'Lafaye', 'f', 'assistant', '2017-03-01', 1775);
 
 
+-- Coucou test du repo 
+
