@@ -432,4 +432,157 @@ SELECT MAX(salaire) AS salaire_max FROM employes;
 |        5000 |
 +-------------+
 
+-- EXERCICE : Affichez le salaire minimum ainsi que le prenom de l'employé ayant ce salaire 
+SELECT prenom, MIN(salaire) FROM employes; -- Pas d'erreur, mais le résultat est FAUX
+-- MIN() c'est une fonction d'agrégation, elle ne peut retourner qu'un seul résultat !!! 
+-- La requête a une réponse qui n'est pas cohérente 
+    -- On récupère le premier prénom de la table puis le MIN() salaire, donc le prenom ne correspond simplement pas 
+
+-- 2 solutions 
+
+    -- 1 - requête imbriquée
+    SELECT prenom, salaire FROM employes WHERE salaire = (SELECT MIN(salaire) AS salaire_mini FROM employes);
++--------+---------+
+| prenom | salaire |
++--------+---------+
+| Julien |    1390 |
++--------+---------+
+
+    -- 2 - avec un order by et un limit 
+    SELECT prenom, salaire FROM employes ORDER BY salaire ASC LIMIT 1;
++--------+---------+
+| prenom | salaire |
++--------+---------+
+| Julien |    1390 |
++--------+---------+
+
+-- IN & NOT IN pour tester plusieurs valeurs  
+-- Affichage des employés des services commercial et comptabilite 
+SELECT * FROM employes WHERE service = "commercial" OR service = "comptabilite";
+SELECT * FROM employes WHERE service IN ("commercial", "comptabilite");
++-------------+-----------+---------+------+--------------+---------------+---------+
+| id_employes | prenom    | nom     | sexe | service      | date_embauche | salaire |
++-------------+-----------+---------+------+--------------+---------------+---------+
+|         388 | Clement   | Gallet  | m    | commercial   | 2010-12-15    |    2300 |
+|         415 | Thomas    | Winter  | m    | commercial   | 2011-05-03    |    3550 |
+|         509 | Fabrice   | Grand   | m    | comptabilite | 2011-12-30    |    2900 |
+|         547 | Melanie   | Collier | f    | commercial   | 2012-01-08    |    3100 |
+|         627 | Guillaume | Miller  | m    | commercial   | 2012-07-02    |    1900 |
+|         655 | Celine    | Perrin  | f    | commercial   | 2012-09-10    |    2700 |
+|         933 | Emilie    | Sennard | f    | commercial   | 2017-01-11    |    1800 |
++-------------+-----------+---------+------+--------------+---------------+---------+
+-- L'inverse NOT IN  
+SELECT * FROM employes WHERE service NOT IN ("commercial", "comptabilite");
++-------------+-------------+----------+------+---------------+---------------+---------+
+| id_employes | prenom      | nom      | sexe | service       | date_embauche | salaire |
++-------------+-------------+----------+------+---------------+---------------+---------+
+|         350 | Jean-Pierre | Laborde  | m    | direction     | 2010-12-09    |    5000 |
+|         417 | Chloe       | Dubar    | f    | production    | 2011-09-05    |    1900 |
+|         491 | Elodie      | Fellier  | f    | secretariat   | 2011-11-22    |    1600 |
+|         592 | Laura       | Blanchet | f    | direction     | 2012-05-09    |    4500 |
+|         699 | Julien      | Cottet   | m    | secretariat   | 2013-01-05    |    1390 |
+|         701 | Mathieu     | Vignal   | m    | informatique  | 2013-04-03    |    2500 |
+|         739 | Thierry     | Desprez  | m    | secretariat   | 2013-07-17    |    1500 |
+|         780 | Amandine    | Thoyer   | f    | communication | 2014-01-23    |    2100 |
+|         802 | Damien      | Durand   | m    | informatique  | 2014-07-05    |    2250 |
+|         854 | Daniel      | Chevel   | m    | informatique  | 2015-09-28    |    3100 |
+|         876 | Nathalie    | Martin   | f    | juridique     | 2016-01-12    |    3550 |
+|         900 | Benoit      | Lagarde  | m    | production    | 2016-06-03    |    2550 |
+|         990 | Stephanie   | Lafaye   | f    | assistant     | 2017-03-01    |    1775 |
++-------------+-------------+----------+------+---------------+---------------+---------+
+
+-- Plusieurs conditions : AND 
+-- On veut un employé du service commercial ayant un salaire inférieur ou égal à 2000 
+SELECT * FROM employes WHERE service = "commercial" AND salaire <= 2000;
+
+-- Pas de soucis pour sauter des lignes en SQL 
+SELECT *                        -- Ce que je souhaite afficher
+FROM employes                   -- De quel table
+WHERE service = "commercial"    -- Quelle condition
+AND salaire <= 2000;            -- Encore une autre condition, etc.
++-------------+-----------+---------+------+------------+---------------+---------+
+| id_employes | prenom    | nom     | sexe | service    | date_embauche | salaire |
++-------------+-----------+---------+------+------------+---------------+---------+
+|         627 | Guillaume | Miller  | m    | commercial | 2012-07-02    |    1900 |
+|         933 | Emilie    | Sennard | f    | commercial | 2017-01-11    |    1800 |
++-------------+-----------+---------+------+------------+---------------+---------+
+
+-- L'un ou l'autre d'un ensemble de conditions : OR 
+-- EXERCICE : Je souhaite récupérer les employés du service production ayant un salaire égal à 1900 ou 2300 
+                    -- Vérifiez bien les résultats 
+
+-- Ici problème, cela nous sort quelqu'un du service commercial ? 
+    -- En fait, les deux conditions autour de AND sont liées entre elles mais celle du OR est indépendante ! Pour y rémédier, des parenthèses !
+    -- Ou sinon le mieux, on utilise IN ! 
+SELECT * FROM employes WHERE service = "production" AND salaire = 1900 OR salaire = 2300;
+
+SELECT * FROM employes WHERE service = "production" AND salaire = 1900 OR service = "production" AND salaire = 2300;
+SELECT * FROM employes WHERE service = "production" AND (salaire = 1900 OR salaire = 2300);
+
+-- Ici la meilleure solution 
+SELECT * FROM employes WHERE service = "production" AND salaire IN (1900, 2300);
+
+-- GROUP BY pour regrouper selon un ou des champs (généralement on utilise GROUP BY avec des fonctions d'agrégation)
+-- Nombre d'employés par service 
+SELECT COUNT(*), service FROM employes; -- Résultat incorrect ! Le COUNT() ne me retourne qu'une seule ligne, et la requête me sort le premier service qu'elle trouve 
+
+-- Avec GROUP BY il est possible de demander de nous renvoyer le COUNT() en regroupant par service 
+
+SELECT COUNT(*) AS nombre_employes, service FROM employes GROUP BY service;
++-----------------+---------------+
+| nombre_employes | service       |
++-----------------+---------------+
+|               2 | direction     |
+|               6 | commercial    |
+|               2 | production    |
+|               3 | secretariat   |
+|               1 | comptabilite  |
+|               3 | informatique  |
+|               1 | communication |
+|               1 | juridique     |
+|               1 | assistant     |
++-----------------+---------------+
+
+-- Ci dessous une requête SELECT * FROM employes ORDER BY service (juste pour visualiser les resultats)
+-- Lorsqu'on appelle un GROUP BY, il est capable "d'éclater" un résultat, pour isoler des lignes blocs par blocs (ici blocs par service)
+    -- Grâce à cet "éclatement" on va être capable d'appliquer une fonction d'agrégation par bloc ! 
++-------------+-------------+----------+------+---------------+---------------+---------+
+| id_employes | prenom      | nom      | sexe | service       | date_embauche | salaire |
++-------------+-------------+----------+------+---------------+---------------+---------+
+
+|         990 | Stephanie   | Lafaye   | f    | assistant     | 2017-03-01    |    1775 |
+
+
+|         388 | Clement     | Gallet   | m    | commercial    | 2010-12-15    |    2300 |
+|         415 | Thomas      | Winter   | m    | commercial    | 2011-05-03    |    3550 |
+|         547 | Melanie     | Collier  | f    | commercial    | 2012-01-08    |    3100 |
+|         627 | Guillaume   | Miller   | m    | commercial    | 2012-07-02    |    1900 |
+|         655 | Celine      | Perrin   | f    | commercial    | 2012-09-10    |    2700 |
+|         933 | Emilie      | Sennard  | f    | commercial    | 2017-01-11    |    1800 |
+
+
+|         780 | Amandine    | Thoyer   | f    | communication | 2014-01-23    |    2100 |
+
+|         509 | Fabrice     | Grand    | m    | comptabilite  | 2011-12-30    |    2900 |
+
+|         350 | Jean-Pierre | Laborde  | m    | direction     | 2010-12-09    |    5000 |
+|         592 | Laura       | Blanchet | f    | direction     | 2012-05-09    |    4500 |
+
+
+|         701 | Mathieu     | Vignal   | m    | informatique  | 2013-04-03    |    2500 |
+|         802 | Damien      | Durand   | m    | informatique  | 2014-07-05    |    2250 |
+|         854 | Daniel      | Chevel   | m    | informatique  | 2015-09-28    |    3100 |
+
+|         876 | Nathalie    | Martin   | f    | juridique     | 2016-01-12    |    3550 |
+
+|         417 | Chloe       | Dubar    | f    | production    | 2011-09-05    |    1900 |
+|         900 | Benoit      | Lagarde  | m    | production    | 2016-06-03    |    2550 |
+
+
+|         491 | Elodie      | Fellier  | f    | secretariat   | 2011-11-22    |    1600 |
+|         699 | Julien      | Cottet   | m    | secretariat   | 2013-01-05    |    1390 |
+|         739 | Thierry     | Desprez  | m    | secretariat   | 2013-07-17    |    1500 |
++-------------+-------------+----------+------+---------------+---------------+---------+
+
+SELECT COUNT(*) AS nombre_employes, service FROM employes GROUP BY service HAVING COUNT(*) > 2;
 
