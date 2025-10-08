@@ -586,3 +586,86 @@ SELECT COUNT(*) AS nombre_employes, service FROM employes GROUP BY service;
 
 SELECT COUNT(*) AS nombre_employes, service FROM employes GROUP BY service HAVING COUNT(*) > 2;
 
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+--------------------- REQUETES D'INSERTION (Action : enregistrement) ------------------------------
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+
+-- id_employes étant la clé primaire en auto increment, elle ne peut pas être vide, donc si je cite le champ, je dois mettre NULL et il se génèrera automatiquement
+INSERT INTO employes (id_employes, prenom, nom, sexe, service, date_embauche, salaire) VALUES (NULL, "Pierra", "Lacaze", "m", "Web", NOW(), 12000);
+-- Le mieux est de ne pas citer ce champ, de toute façon il est géré automatiquement par MySQL, il prends +1 à chaque nouvelle insertion
+-- Ci dessous, meilleure formule
+INSERT INTO employes (prenom, nom, sexe, service, date_embauche, salaire) VALUES ("Pierra", "Lacaze", "m", "Web", NOW(), 12000);
+
+-- Il est possible de ne pas préciser les champs. Cependant, on est dans ce cas obligé de nommer l'intégralité des champs et surtout dans le même ordre que la structure ! Au risque de recevoir les mauvaises valeurs dans les mauvais champs 
+INSERT INTO employes VALUES (NULL, "Lacaze", "Pierra", "m", "Web", NOW(), 12000);
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+--------------------- REQUETES DE MODIFICATION (Action : modification) ----------------------------
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+-- On modifie le salaire d'un employé 
+-- On utilise le mot clé SET pour définir le champ concerné et sa nouvelle valeur, ensuite on cible un ou plusieurs enregistrements grâce aux conditions WHERE (même chose que pour les requêtes SELECT)
+UPDATE employes SET salaire = 1200 WHERE id_employes = 991;
+
+-- Plusieurs modifications sont possibles en une seule fois 
+UPDATE employes SET salaire = 2000, service = "informatique" WHERE id_employes = 992;
+
+-- REPLACE 
+-- ATTENTION - Il ne faut JAMAIS utiliser l'outil REPLACE 
+-- Comment se comporte REPLACE ? S'il ne trouve pas la ligne en question, il va insérer, s'il trouve la ligne il va "modifier"
+REPLACE INTO employes VALUES (994, "Polo", "Lolo", "m", "Web", "2022-01-01", 2000); -- Ici il insère, car il ne connait pas l'id 994
+REPLACE INTO employes VALUES (994, "Polo", "Lolo", "m", "Web", "2022-01-01", 20000); -- Ici il "modifie" la ligne en changeant son salaire
+
+-- ATTENTION, quand il trouve la ligne, il supprime celle qu'il trouve et réinsère une nouvelle 
+    -- Les conditions peuvent être grave en fonction de la gestion de nos associations de tables et contraintes d'intégrité, avec la relation CASCADE (réaction en chaine), cela pourrait induire des suppressions non souhaitées
+
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+--------------------- REQUETES DE SUPPRESSION (Action : modification) -----------------------------
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+DELETE FROM employes; -- Cette requête supprime toutes les données de la table 
+
+-- Suppression des entrées de la table id 991
+DELETE FROM employes WHERE id_employes = 991;
+-- Ci dessous je supprime tous les employés du service informatique
+DELETE FROM employes WHERE service = "informatique";
+-- Ci dessous, je supprime tous les employés du service informatique SAUF celui qui a l'id 701 
+DELETE FROM employes WHERE service = "informatique" AND id_employes != 701;
+
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+--------------------- EXERCICES : -----------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+
+-- 1 -- Afficher la profession de l'employé 547.
+-- 2 -- Afficher la date d'embauche d'Amandine.	
+-- 3 -- Afficher le nom de famille de Guillaume	
+-- 4 -- Afficher le nombre de personne ayant un n° id_employes commençant par le chiffre 5.	
+-- 5 -- Afficher le nombre de commerciaux.
+-- 6 -- Afficher le salaire moyen des informaticiens 
+-- 7 -- Afficher les 5 premiers employés après avoir classé leur nom de famille par ordre alphabétique. 
+-- 8 -- Afficher le coût des commerciaux sur 1 année.	
+-- 9 -- Afficher le salaire moyen par service. 
+-- 10 -- Afficher le nombre de recrutement sur l'année 2010
+-- 11 -- Afficher le salaire moyen appliqué lors des recrutements sur la période allant de 2015 a 2017
+-- 12 -- Afficher le nombre de service différent 
+-- 13 -- Afficher tous les employés 
+-- 14 -- Afficher conjointement le nombre d'homme et de femme dans l'entreprise
+-- 15 -- Afficher les commerciaux ayant été recrutés avant 2012 de sexe masculin et gagnant un salaire supérieur a 2500 €
+-- 16 -- Qui a été embauché en dernier
+-- 17 -- Afficher les informations sur l'employé du service commercial gagnant le salaire le plus élevé 
+-- 18 -- Afficher le prénom du comptable gagnant le meilleur salaire
+-- 19 -- Afficher le prénom de l'informaticien ayant été recruté en premier
+-- 20 -- Augmenter chaque employé de 100 €
+-- 21 -- Supprimer les employés du service secrétariat
