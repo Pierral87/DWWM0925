@@ -82,10 +82,15 @@ INSERT INTO `vehicule` (`id_vehicule`, `marque`, `modele`, `couleur`, `immatricu
     -- 1 - Créer les clés étrangères et les relations pour empêcher l'insertion de fausses valeurs 
 
     -- 2 - Définir les modes de contraintes en fonction des souhaits de notre client ci-dessous :
-        -- 1 - La société de taxis peut modifier leurs conducteurs via leur logiciel, lorsqu'un conducteur est modifié, la société aimerait que la modification soit répercutée dans la table d'association   
+        -- 1 - La société de taxis peut modifier leurs conducteurs via leur logiciel, lorsqu'un conducteur est modifié, la société aimerait que la modification soit répercutée dans la table d'association 
+        sur la relation conducteur ON UPDATE CASCADE
         -- 2 - La société de taxis peut supprimer des conducteurs via leur logiciel, ils aimeraient bloquer la possibilité de supprimer un conducteur tant que celui-ci conduit un véhicule.
+        sur la relation conducteur ON DELETE RESTRICT
         -- 3 - La société de taxis peut modifier un véhicule via leur logiciel. Lorsqu'un véhicule est modifié, on veut que la modification soit répercutée dans la table d'association
+        sur la relation vehicule ON UPDATE CASCADE 
         -- 4 - Si un véhicule est supprimé alors qu'un ou plusieurs conducteurs le conduisaient, la société aimerait garder la trace de l'association dans la table d'association malgré tout.
+        sur la relation vehicule ON DELETE SET NULL (attention à bien vérifier si le champ id_vehicule sur la table association est autorisé à être NULL)
+
 
 -- EXERCICES Requetes
 

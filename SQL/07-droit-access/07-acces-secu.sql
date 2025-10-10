@@ -54,9 +54,23 @@ USE entreprise;
 
 -- Créer les comptes utilisateur suivants : 
         -- secretaire : avec le password de votre choix, on lui attribue le privilège de lecture sur les champs suivants id_employes, nom, prenom, sexe, service sur la table employes 
+        CREATE USER 'secretaire'@'localhost'  IDENTIFIED BY 'azerty';
+        GRANT SELECT(id_employes, nom, prenom, sexe, service) 
+        ON entreprise.employes 
+        TO 'secretaire'@'localhost';
         -- directeur : avec le password de votre choix, on lui attribue les privilèges suivants : selection, modification, insertion, suppression sur la bdd entreprise en plus des droits d'attribution de droits à d'autres utilisateurs 
+        CREATE USER 'directeur'@'localhost'  IDENTIFIED BY 'azerty';
+        GRANT SELECT, UPDATE, INSERT, DELETE, GRANT OPTION
+        ON entreprise.employes 
+        TO 'directeur'@'localhost';
         -- informaticien : mot de passe au choix, donnez lui tous les droits mais une limitation de ressources à 10 requêtes maximum par heure et un nombre de connexion de 6 maximum par heure
-    
+        CREATE USER 'informaticien'@'localhost'  IDENTIFIED BY 'azerty'
+        WITH MAX_QUERIES_PER_HOUR 10 
+        MAX_CONNECTIONS_PER_HOUR 6;
+        GRANT ALL
+        ON entreprise.employes 
+        TO 'informaticien'@'localhost';
+        
     -- Déconnectez vous du compte root, et connectez vous en tant que secrétaire et répondre aux requêtes suivantes : 
             -- 1 -- Afficher la profession de l'employé 417
             -- 2 -- Afficher le nombre de commerciaux 
