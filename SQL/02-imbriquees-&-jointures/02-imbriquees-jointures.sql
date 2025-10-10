@@ -338,6 +338,12 @@ ORDER BY a.prenom;
 | Laura     | Le Petit chose          | 2016-12-12  |
 +-----------+-------------------------+-------------+
 
+SELECT a.prenom, l.titre, e.date_sortie 
+FROM emprunt e 
+JOIN livre l ON e.id_livre = l.id_livre 
+JOIN abonne a ON e.id_abonne = a.id_abonne
+WHERE e.id_emprunt = 9;
+
 
 --------------------------------------------------------------------------------------------------
 --------------------------------------------------------------------------------------------------

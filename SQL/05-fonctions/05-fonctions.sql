@@ -22,7 +22,7 @@ SELECT DATABASE(); -- Me retourne le nom de la base actuellement sélectionnée
 
 -- CONCAT() : Permet de concaténer (faire suivre) des informations 
 
-SELECT CONCAT ("a", "b", "c");
+SELECT CONCAT("a", "b", "c");
 
 SELECT CONCAT(id_abonne, " - ", prenom) FROM abonne; -- Je mets à la suite dans une seule colonne du résultat, l'id et le prenom de l'abonne 
 
@@ -51,7 +51,7 @@ SELECT CURRENT_TIMESTAMP; -- le Timestamp c'est l'an 0 informatique, c'est l'hor
 
 SELECT UNIX_TIMESTAMP(NOW());
 
-DATE_FORMAT() 
+DATE_FORMAT(); 
     -- DATE_FORMAT est une fonction qui nous permet de formater au format de notre choix, une date par défaut le format c'est YYYY-MM-DD, on peut par exemple le formater en DD/MM/YYYY
         -- Voir doc pour le format 
         -- DATE_FORMAT(date, format)
