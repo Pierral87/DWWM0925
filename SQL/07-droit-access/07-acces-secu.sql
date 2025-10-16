@@ -73,14 +73,21 @@ USE entreprise;
         
     -- Déconnectez vous du compte root, et connectez vous en tant que secrétaire et répondre aux requêtes suivantes : 
             -- 1 -- Afficher la profession de l'employé 417
+                        SELECT service FROM employes WHERE id_employes = 417;
             -- 2 -- Afficher le nombre de commerciaux 
+                        SELECT COUNT(*) AS nombre_commerciaux FROM employes WHERE service = "commercial";
             -- 3 -- Afficher le nombre de services différents 
+                        SELECT COUNT(DISTINCT service) FROM employes;
             -- 4 -- Augmenter le salaire de chaque employés de 100 euros 
+                        UPDATE employes SET salaire = salaire + 100; (pas les droits)
 
     -- Déconnectez vous du compte secrétaire et connectez vous en tant que directeur et répondre aux requêtes suivantes : 
             -- 1 -- Afficher la date d'embauche de Amandine 
+                        SELECT date_embauche FROM employes WHERE prenom = "Amandine";
             -- 2 -- Afficher le salaire moyen par service 
+                        SELECT AVG(salaire) AS salaire_moyen, service FROM employes GROUP BY service;
             -- 3 -- Afficher les informations de l'employé du service commercial gagnant le salaire le plus élevé 
+                        SELECT * FROM employes WHERE service = "commercial" ORDER BY salaire DESC LIMIT 1;
 
     -- Déconnectez vous de directeur, connectez vous comme informaticien
             -- 1 -- Lancez plusieurs requêtes pour tester le maximum de requêtes autorisées

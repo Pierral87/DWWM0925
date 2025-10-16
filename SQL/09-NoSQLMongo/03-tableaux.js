@@ -236,14 +236,75 @@ db.employes.find(
 
 
 // -- 1 -- Pour chaque employé, ajoutez une nouvelle compétence linguistique "Quebecois".
+db.employes.updateMany(
+    {},
+    { $addToSet: { "competences.langues": "Quebecois" } }
+  );
 // -- 2 -- Sélectionnez les employés qui ont des compétences linguistiques comprenant à la fois "Français" et "Anglais", mais pas "Espagnol".
+db.employes.find({
+    "competences.langues": { $all: ["Français", "Anglais"], $nin: ["Espagnol"] }
+  });
 // -- 3 -- Sélectionnez les employés qui ont des compétences linguistiques "Japonais" et "Anglais", mais aucune autre langue.
+db.employes.find({
+    "competences.langues": { $all: ["Japonais", "Anglais"] },
+    "competences.langues": { $size: 2 }
+  });
 // -- 4 -- Pour chaque employé, supprimez la dernière compétence linguistique de leur liste.
+db.employes.updateMany(
+    {},
+    { $pop: { "competences.langues": 1 } }
+  );
 // -- 5 -- Sélectionnez les employés dont la première compétence linguistique est "Anglais".
+db.employes.find({
+    "competences.langues.0": "Anglais"
+  });
 // -- 6 -- Pour chaque employé masculin du service "communication", ajoutez la langue "Portugais" à leurs compétences.
+db.employes.updateMany(
+    {
+      sexe: "m",
+      service: "communication"
+    },
+    { $addToSet: { "competences.langues": "Portugais" } }
+  );
 // -- 7 -- Sélectionnez les employés masculins du service "commercial" qui ne parlent pas "Anglais".
+db.employes.find({
+    sexe: "m",
+    service: "commercial",
+    "competences.langues": { $nin: ["Anglais"] }
+  });
 // -- 8 -- Supprimez complètement la compétence linguistique "Français" de tous les employés.
+db.employes.updateMany(
+    {},
+    { $pull: { "competences.langues": "Français" } }
+  );
 // -- 9 -- Sélectionnez tous les employés qui parlent "Anglais".
+db.employes.find({
+    "competences.langues": "Anglais"
+  });
 // -- 10 -- Ajoutez une nouvelle langue "Chinois" aux compétences des employés qui ont un salaire supérieur à 3000.
+db.employes.updateMany(
+    { salaire: { $gt: 3000 } },
+    { $addToSet: { "competences.langues": "Chinois" } }
+  );
 // -- 11 -- Sélectionnez les employées femmes du service "commercial" qui parlent "Anglais".
+db.employes.find({
+    sexe: "f",
+    service: "commercial",
+    "competences.langues": "Anglais"
+  });
 // -- 12 -- Triez les employés par le nombre de langues qu'ils parlent, du plus grand au plus petit.
+db.employes.aggregate([
+    {
+      $project: {
+        _id: 0,
+        prenom: 1,
+        nom: 1,
+        nbLangues: { $size: "$competences.langues" },
+        competences: 1
+      }
+    },
+    {
+      $sort: { nbLangues: -1 }
+    }
+  ]);
+
